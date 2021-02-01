@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
+import Modal from './components/Modal';
+import { ModalProvider } from './hooks/useModal';
 
 import Routes from './routes';
 
@@ -9,7 +11,10 @@ const App: React.FC = () => (
   <>
     <GlobalStyle />
     <Router>
-      <Routes />
+      <ModalProvider>
+        <Modal />
+        <Routes />
+      </ModalProvider>
     </Router>
   </>
 );
