@@ -1,7 +1,12 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
-const api = axios.create({
-  baseURL: 'http://35.226.206.75:3000',
-});
+const baseURLs = {
+  userservice: 'https://api.globalgiving.org/api/userservice/',
+  orgservice: 'https://api.globalgiving.org/api/public/orgservice/',
+};
 
-export default api;
+const getApi = (source: 'orgservice' | 'userservice'): AxiosInstance => {
+  return axios.create({ baseURL: baseURLs[source] });
+};
+
+export { getApi };

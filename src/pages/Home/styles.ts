@@ -1,13 +1,14 @@
 import styled from 'styled-components';
+import { shade } from 'polished';
 
 export const MainHeader = styled.div`
   min-width: 360px;
+  height: 120px;
   display: flex;
   position: relative;
   z-index: 1;
   flex: 1;
   justify-content: center;
-  height: 120px;
   background-color: #fff;
   align-items: center;
   justify-content: center;
@@ -34,8 +35,19 @@ export const MainFooter = styled.div`
 
 export const HeaderContainer = styled.div`
   display: flex;
-  flex: 0.8;
-  max-width: 1165px;
+  max-width: 1600px;
+
+  @media (max-width: 400px) {
+    width: 95%;
+  }
+
+  @media (min-width: 401px) and (max-width: 768px) {
+    width: 90%;
+  }
+
+  @media (min-width: 769px) {
+    width: 80%;
+  }
 
   .container-logo {
     padding: 15px 0;
@@ -67,17 +79,39 @@ export const HeaderContainer = styled.div`
 
 export const ContentContainer = styled.div`
   display: flex;
-  flex: 0.8;
-  max-width: 1165px;
+  max-width: 1600px;
 
   padding: 15px 0;
   flex-direction: column;
+
+  @media (max-width: 400px) {
+    width: 95%;
+  }
+
+  @media (min-width: 401px) and (max-width: 768px) {
+    width: 90%;
+  }
+
+  @media (min-width: 769px) {
+    width: 80%;
+  }
 `;
 
 export const FooterContainer = styled.div`
   display: flex;
-  flex: 0.8;
-  max-width: 1165px;
+  max-width: 1600px;
 
   padding: 15px 0;
+
+  @media (max-width: 400px) {
+    width: 95%;
+  }
+
+  @media (min-width: 401px) and (max-width: 768px) {
+    width: 90%;
+  }
+
+  @media (min-width: 769px) {
+    width: 80%;
+  }
 `;
