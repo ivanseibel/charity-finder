@@ -4,4 +4,4 @@
 
 The objective of this app is to utilize the Global Giving organizations API to provide the visitors with a list of global charities they can search to find a charity that matches their philanthropic interests.
 
-:construction: This appliation is under construction. :construction:
+:construction: This application is under construction. :construction:
