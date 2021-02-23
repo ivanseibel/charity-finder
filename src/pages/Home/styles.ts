@@ -97,6 +97,29 @@ export const ContentContainer = styled.div`
   }
 `;
 
+export const FiltersContainer = styled.div`
+  display: flex;
+  width: 100%;
+  /* border: 1px solid black; */
+
+  @media (max-width: 400px) {
+    flex-direction: column;
+  }
+
+  @media (min-width: 401px) {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  /* @media (min-width: 401px) and (max-width: 768px) {
+    flex-direction: row;
+  }
+
+  @media (min-width: 769px) {
+    flex-direction: row;
+  } */
+`;
+
 export const FooterContainer = styled.div`
   display: flex;
   max-width: 1600px;

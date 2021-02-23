@@ -1,0 +1,9 @@
+export const authRequest = {
+  auth_request: {
+    user: {
+      email: 'youremail',
+      password: 'yourpassword',
+    },
+    api_key: 'yourapikey',
+  },
+};

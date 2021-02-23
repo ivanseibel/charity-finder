@@ -28,3 +28,4 @@ yarn-error.log*
 .env
 
 public/env.js
+src/config/auth.ts
