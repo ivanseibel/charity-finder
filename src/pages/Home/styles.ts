@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { shade } from 'polished';
 
 export const MainHeader = styled.div`
   min-width: 360px;
