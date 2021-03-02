@@ -18,10 +18,12 @@ interface SignInCredentials {
 
 interface AuthState {
   token: string;
+  api_key: string;
 }
 
 interface AuthContextData {
   token: string;
+  api_key: string;
   signIn(credentials: SignInCredentials): Promise<void>;
 }
 
@@ -43,7 +45,7 @@ const AuthProvider: React.FC = ({ children }) => {
         api.defaults.headers.authorization = `Bearer ${token}`;
         console.log(token);
 
-        setData({ token });
+        setData({ token, api_key: authRequest.auth_request.api_key });
       }
     } catch (error) {
       if (error.response) {
@@ -60,7 +62,13 @@ const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ token: data.token, signIn }}>
+    <AuthContext.Provider
+      value={{
+        token: data.token,
+        api_key: data.api_key,
+        signIn,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

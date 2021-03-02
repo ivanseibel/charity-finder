@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createStyles, makeStyles, TextField, Theme } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -7,11 +7,13 @@ import Autocomplete, {
   createFilterOptions,
 } from '@material-ui/lab/Autocomplete';
 import Button from '@material-ui/core/Button';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import * as SC from './styles';
 import { ReactComponent as ReactLogo } from '../../public/assets/images/charity-finder-icon-blue.svg';
 import { useModal } from '../../hooks/useModal';
 import { useSearch } from '../../hooks/useSearch';
 import { getApi } from '../../services/api';
+import { useAuth } from '../../hooks/useAuth';
 
 interface CountryType {
   name: string | null;
@@ -23,26 +25,30 @@ interface OrganizationType {
   name: string | null;
 }
 
+interface ThemeType {
+  id: string;
+  name: string;
+}
+
 const Home: React.FC = () => {
   const { countries, organizations } = useSearch();
-
-  const [homeCountry, setHomeCountry] = useState<CountryType | null>(null);
-  const [countryServes, setCountryServes] = useState<CountryType | null>(null);
+  const [country, setCountry] = useState<CountryType | null>(null);
+  const [theme, setTheme] = useState<ThemeType | null>(null);
+  const [themes, setThemes] = useState<ThemeType[]>([]);
   const [organization, setOrganization] = useState<OrganizationType | null>(
     null,
   );
 
+  const { api_key } = useAuth();
+
   const { handleModal } = useModal();
 
-  const useStyles = makeStyles((theme: Theme) =>
+  const min600 = useMediaQuery('(min-width:1052px)');
+
+  const useStyles = makeStyles(() =>
     createStyles({
       root: {
-        [theme.breakpoints.down('sm')]: {
-          width: '100%',
-        },
-        [theme.breakpoints.up('md')]: {
-          width: '32%',
-        },
+        width: min600 ? '32%' : '100%',
       },
       option: {
         fontSize: '2rem',
@@ -100,15 +106,34 @@ const Home: React.FC = () => {
   }, []);
 
   // TODO: Revalidate requirements and choose new options to filter organizations/projects
-  // const handleSearch = useCallback(() => {
-  //   const api = getApi('orgservice');
+  const handleSearch = useCallback(async () => {
+    const api = getApi('services');
 
-  //   api.get(`all/organizations/active`, {
-  //     params: {
+    const result = await api.get(`search/projects`, {
+      params: {
+        api_key,
+        q: '*',
+        filter: `country:${country?.code2}`,
+      },
+    });
 
-  //     }
-  //   })
-  // }, []);
+    console.log(result);
+  }, [api_key, country]);
+
+  useEffect(() => {
+    (async () => {
+      const api = getApi('projectservice');
+      const response = await api('themes', {
+        params: {
+          api_key,
+        },
+      });
+
+      if (response.data) {
+        setThemes(response.data.themes.theme);
+      }
+    })();
+  }, [api_key]);
 
   return (
     <>
@@ -127,129 +152,113 @@ const Home: React.FC = () => {
       <SC.MainBody>
         <SC.ContentContainer>
           <SC.FiltersContainer>
-            <Autocomplete
-              value={homeCountry}
-              classes={classes}
-              options={countries}
-              getOptionLabel={(option: CountryType) => option.name || ''}
-              renderOption={(option: CountryType) => (
-                <>
-                  <span style={{ marginRight: 5 }}>
-                    {countryToFlag(option.code2 || '')}
-                  </span>
-                  {option.name} ({option.code2})
-                </>
-              )}
-              autoComplete
-              includeInputInList
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  classes={{ root: classes.input }}
-                  label="Home Countries"
-                  margin="normal"
-                />
-              )}
-              onChange={(event, newValue) => {
-                setHomeCountry(newValue as CountryType);
-                setCountryServes(null);
-                setOrganization(null);
-              }}
-            />
-            <Autocomplete
-              value={countryServes}
-              classes={classes}
-              options={countries}
-              getOptionLabel={(option: CountryType) => option.name || ''}
-              renderOption={(option: CountryType) => (
-                <>
-                  <span style={{ marginRight: 5 }}>
-                    {countryToFlag(option.code2 || '')}
-                  </span>
-                  {option.name} ({option.code2})
-                </>
-              )}
-              autoComplete
-              includeInputInList
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  classes={{ root: classes.input }}
-                  label="Served Countries"
-                  margin="normal"
-                />
-              )}
-              onChange={(event, newValue) => {
-                setCountryServes(newValue as CountryType);
-                setHomeCountry(null);
-                setOrganization(null);
-              }}
-            />
-            <Autocomplete
-              value={organization}
-              classes={classes}
-              options={organizations}
-              getOptionLabel={(option: OrganizationType) => option.name || ''}
-              autoComplete
-              includeInputInList
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  classes={{ root: classes.input }}
-                  label="Organizations"
-                  margin="normal"
-                />
-              )}
-              filterOptions={filterOptions}
-              onChange={(event, newValue) => {
-                setOrganization(newValue as OrganizationType);
-                setHomeCountry(null);
-                setCountryServes(null);
-              }}
-            />
-          </SC.FiltersContainer>
-
-          <div
-            style={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              marginTop: 20,
-              marginBottom: 20,
-            }}
-          >
-            <div
-              style={{
-                width: 260,
-                display: 'flex',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Button
-                variant="contained"
-                color="primary"
-                endIcon={<SearchIcon />}
-                size="medium"
-                style={{ width: 120, fontSize: '1.5rem' }}
-              >
-                Search
-              </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                endIcon={<ClearIcon />}
-                size="medium"
-                style={{ width: 120, fontSize: '1.5rem' }}
-                onClick={() => {
-                  setHomeCountry(null);
-                  setCountryServes(null);
+            <div id="selects">
+              <Autocomplete
+                value={country}
+                classes={classes}
+                options={countries}
+                getOptionLabel={(option: CountryType) => option.name || ''}
+                renderOption={(option: CountryType) => (
+                  <>
+                    <span style={{ marginRight: 5 }}>
+                      {countryToFlag(option.code2 || '')}
+                    </span>
+                    {option.name} ({option.code2})
+                  </>
+                )}
+                autoComplete
+                includeInputInList
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    classes={{ root: classes.input }}
+                    label="Countries"
+                    margin="normal"
+                  />
+                )}
+                onChange={(event, newValue) => {
+                  setCountry(newValue as CountryType);
+                  setTheme(null);
                   setOrganization(null);
                 }}
-              >
-                Reset
-              </Button>
+              />
+              <Autocomplete
+                value={theme}
+                classes={classes}
+                options={themes}
+                getOptionLabel={(option: ThemeType) => option.name || ''}
+                autoComplete
+                includeInputInList
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    classes={{ root: classes.input }}
+                    label="Themes"
+                    margin="normal"
+                  />
+                )}
+                onChange={(event, newValue) => {
+                  setTheme(newValue as ThemeType);
+                  setCountry(null);
+                  setOrganization(null);
+                }}
+              />
+              <Autocomplete
+                value={organization}
+                classes={classes}
+                options={organizations}
+                getOptionLabel={(option: OrganizationType) => option.name || ''}
+                autoComplete
+                includeInputInList
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    classes={{ root: classes.input }}
+                    label="Organizations"
+                    margin="normal"
+                  />
+                )}
+                filterOptions={filterOptions}
+                onChange={(event, newValue) => {
+                  setOrganization(newValue as OrganizationType);
+                  setCountry(null);
+                  setTheme(null);
+                }}
+              />
             </div>
-          </div>
+
+            <div id="buttons">
+              <div>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  endIcon={<SearchIcon />}
+                  size="medium"
+                  style={{ width: 120, fontSize: '1.5rem' }}
+                  onClick={handleSearch}
+                >
+                  Search
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  endIcon={<ClearIcon />}
+                  size="medium"
+                  style={{ width: 120, fontSize: '1.5rem' }}
+                  onClick={() => {
+                    setCountry(null);
+                    setTheme(null);
+                    setOrganization(null);
+                  }}
+                >
+                  Reset
+                </Button>
+              </div>
+            </div>
+          </SC.FiltersContainer>
+          <SC.ResultsContainer>
+            <p>Please do a search</p>
+          </SC.ResultsContainer>
         </SC.ContentContainer>
       </SC.MainBody>
 

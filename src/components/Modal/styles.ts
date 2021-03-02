@@ -31,21 +31,30 @@ export const Container = styled.div`
       font-size: 2rem;
       padding: 4rem;
       position: relative;
+      /* min-width: 90%; */
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
         0 4px 6px -2px rgba(0, 0, 0, 0.05);
       --text-opacity: 1;
       color: rgba(45, 55, 72, var(--text-opacity));
 
-      @media (max-width: 400px) {
+      @media (max-width: 600px) {
         max-width: 90%;
       }
 
-      @media (max-width: 800px) {
-        max-width: 90%;
+      @media (min-width: 600px) {
+        max-width: 80%;
       }
 
-      @media (min-width: 1165px) {
-        max-width: 40%;
+      @media (min-width: 768px) {
+        max-width: 70%;
+      }
+
+      @media (min-width: 992px) {
+        max-width: 60%;
+      }
+
+      @media (min-width: 1200px) {
+        max-width: 50%;
       }
 
       button {

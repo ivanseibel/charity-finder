@@ -22,6 +22,7 @@ export const MainBody = styled.div`
   background-color: #f3f2ef;
 `;
 
+// TODO: improve footer layout
 export const MainFooter = styled.div`
   min-width: 360px;
   display: flex;
@@ -30,6 +31,10 @@ export const MainFooter = styled.div`
   align-items: center;
   background-color: #fff;
   height: 100px;
+
+  position: relative;
+  z-index: 1;
+  box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.2);
 `;
 
 export const HeaderContainer = styled.div`
@@ -87,7 +92,7 @@ export const ContentContainer = styled.div`
     width: 95%;
   }
 
-  @media (min-width: 401px) and (max-width: 768px) {
+  @media (min-width: 400px) and (max-width: 768px) {
     width: 90%;
   }
 
@@ -99,24 +104,48 @@ export const ContentContainer = styled.div`
 export const FiltersContainer = styled.div`
   display: flex;
   width: 100%;
-  /* border: 1px solid black; */
+  flex-direction: column;
+  background-color: white;
+  border-radius: 6px;
+  padding: 0 15px;
 
-  @media (max-width: 400px) {
+  div#selects {
+    display: flex;
+    width: 100%;
     flex-direction: column;
+
+    @media (min-width: 1052px) {
+      flex-direction: row;
+      justify-content: space-around;
+    }
   }
 
-  @media (min-width: 401px) {
-    flex-direction: row;
-    justify-content: space-around;
-  }
+  div#buttons {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    margin-bottom: 20px;
 
-  /* @media (min-width: 401px) and (max-width: 768px) {
-    flex-direction: row;
+    div {
+      width: 260px;
+      display: flex;
+      justify-content: space-between;
+      margin-right: 5px;
+    }
   }
+`;
 
-  @media (min-width: 769px) {
-    flex-direction: row;
-  } */
+export const ResultsContainer = styled.div`
+  margin: 15px 0 0;
+  min-height: 500px;
+  width: 100%;
+  background-color: white;
+  border-radius: 6px;
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
 `;
 
 export const FooterContainer = styled.div`
