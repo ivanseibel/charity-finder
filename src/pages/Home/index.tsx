@@ -8,6 +8,8 @@ import Autocomplete, {
 } from '@material-ui/lab/Autocomplete';
 import Button from '@material-ui/core/Button';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import DotLoader from 'react-spinners/DotLoader';
+// import { css } from '@emotion/core';
 import * as SC from './styles';
 import { ReactComponent as ReactLogo } from '../../public/assets/images/charity-finder-icon-blue.svg';
 import { useModal } from '../../hooks/useModal';
@@ -38,8 +40,9 @@ const Home: React.FC = () => {
   const [organization, setOrganization] = useState<OrganizationType | null>(
     null,
   );
+  const [searching, setSearching] = useState(false);
 
-  const { api_key } = useAuth();
+  const { api_key, token } = useAuth();
 
   const { handleModal } = useModal();
 
@@ -107,20 +110,43 @@ const Home: React.FC = () => {
 
   // TODO: Revalidate requirements and choose new options to filter organizations/projects
   const handleSearch = useCallback(async () => {
-    const api = getApi('services');
+    if (token) {
+      try {
+        setSearching(true);
+        const api = getApi('services');
 
-    const result = await api.get(`search/projects`, {
-      params: {
-        api_key,
-        q: '*',
-        filter: `country:${country?.code2}`,
-      },
-    });
+        let filter = '';
 
-    console.log(result);
-  }, [api_key, country]);
+        if (country) {
+          filter = `country:${country?.code2}`;
+        } else if (theme) {
+          filter = `theme:${theme?.id}`;
+        } else if (organization) {
+          filter = 'organization';
+        }
+
+        const result = await api.get(`search/projects`, {
+          params: {
+            api_key,
+            q: '*',
+            filter,
+          },
+        });
+
+        console.log(result);
+      } catch (error) {
+        console.log(error.response);
+      } finally {
+        setSearching(false);
+      }
+    }
+  }, [api_key, country, organization, theme, token]);
 
   useEffect(() => {
+    if (!token) {
+      return;
+    }
+
     (async () => {
       const api = getApi('projectservice');
       const response = await api('themes', {
@@ -133,7 +159,7 @@ const Home: React.FC = () => {
         setThemes(response.data.themes.theme);
       }
     })();
-  }, [api_key]);
+  }, [api_key, token]);
 
   return (
     <>
@@ -257,7 +283,8 @@ const Home: React.FC = () => {
             </div>
           </SC.FiltersContainer>
           <SC.ResultsContainer>
-            <p>Please do a search</p>
+            <DotLoader color="gray" loading={searching} size={150} />
+            {!searching && <p>Please do a search</p>}
           </SC.ResultsContainer>
         </SC.ContentContainer>
       </SC.MainBody>
