@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { createStyles, makeStyles, TextField, Theme } from '@material-ui/core';
+import React, { useCallback, useEffect, useState } from 'react';
+import { createStyles, makeStyles, TextField } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import ClearIcon from '@material-ui/icons/Clear';
 import Autocomplete, {
@@ -108,7 +108,6 @@ const Home: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // TODO: Revalidate requirements and choose new options to filter organizations/projects
   const handleSearch = useCallback(async () => {
     if (token) {
       try {
