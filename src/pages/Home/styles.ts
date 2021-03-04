@@ -24,17 +24,17 @@ export const MainBody = styled.div`
 
 // TODO: improve footer layout
 export const MainFooter = styled.div`
-  min-width: 360px;
-  display: flex;
-  flex: 1;
   justify-content: center;
-  align-items: center;
+  flex: 1;
+  display: flex;
+  min-width: 360px;
   background-color: #fff;
-  height: 100px;
+  align-items: center;
 
+  clear: both;
   position: relative;
-  z-index: 1;
-  box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.2);
+  height: 100px;
+  margin-top: auto;
 `;
 
 export const HeaderContainer = styled.div`
