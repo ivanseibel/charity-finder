@@ -37,7 +37,7 @@ export const MainFooter = styled.div`
 
   box-shadow: 1px -1px 1px 0px rgba(0, 0, 0, 0.1);
   position: relative;
-  z-index: 2;
+  z-index: 1;
 `;
 
 export const HeaderContainer = styled.div`
