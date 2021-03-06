@@ -22,7 +22,6 @@ export const MainBody = styled.div`
   background-color: #f3f2ef;
 `;
 
-// TODO: improve footer layout
 export const MainFooter = styled.div`
   justify-content: center;
   flex: 1;
