@@ -34,6 +34,10 @@ export const MainFooter = styled.div`
   position: relative;
   height: 100px;
   margin-top: auto;
+
+  box-shadow: 1px -1px 1px 0px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 2;
 `;
 
 export const HeaderContainer = styled.div`
