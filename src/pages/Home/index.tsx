@@ -380,3 +380,9 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
+// TODO: Create search pagination
+// TODO: Componentize search block
+// TODO: Migrate to Next.js
+// TODO: Eliminate inline styles
+// TODO: Move all styles to styles.ts (create ui components)
