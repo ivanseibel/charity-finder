@@ -18,11 +18,11 @@ export const MainBody = styled.div`
   min-width: 360px;
   display: flex;
   flex: 1;
-  justify-content: center;
+  align-items: center;
   background-color: #f3f2ef;
+  flex-direction: column;
 `;
 
-// TODO: improve footer layout
 export const MainFooter = styled.div`
   justify-content: center;
   flex: 1;
@@ -35,6 +35,10 @@ export const MainFooter = styled.div`
   position: relative;
   height: 100px;
   margin-top: auto;
+
+  box-shadow: 1px -1px 1px 0px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
 `;
 
 export const HeaderContainer = styled.div`
@@ -138,7 +142,7 @@ export const FiltersContainer = styled.div`
 
 export const ResultsContainer = styled.div`
   margin: 15px 0 0;
-  min-height: 500px;
+  min-height: 450px;
   width: 100%;
   background-color: white;
   border-radius: 6px;

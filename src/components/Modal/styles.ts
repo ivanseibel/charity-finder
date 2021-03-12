@@ -14,7 +14,7 @@ export const Container = styled.div`
     left: 0;
     width: 100%;
     background: rgba(0, 0, 0, 0.8);
-    z-index: 2;
+    z-index: 999;
 
     div {
       line-height: 1.5;

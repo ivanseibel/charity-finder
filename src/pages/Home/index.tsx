@@ -9,13 +9,15 @@ import Autocomplete, {
 import Button from '@material-ui/core/Button';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import DotLoader from 'react-spinners/DotLoader';
-// import { css } from '@emotion/core';
+import Grid from '@material-ui/core/Grid';
 import * as SC from './styles';
 import { ReactComponent as ReactLogo } from '../../public/assets/images/charity-finder-icon-blue.svg';
 import { useModal } from '../../hooks/useModal';
 import { useSearch } from '../../hooks/useSearch';
 import { getApi } from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
+import ResultCard from '../../components/ResultCard';
+import Pagination from '../../components/Pagination/Index';
 
 interface CountryType {
   name: string | null;
@@ -32,6 +34,34 @@ interface ThemeType {
   name: string;
 }
 
+interface ApiProjectOrganizationType {
+  id: number;
+  name: string;
+  logoUrl: string;
+}
+
+interface ApiProjectImageType {
+  imagelink: string[];
+}
+
+interface ApiProjectType {
+  id: number;
+  title: string;
+  organization: ApiProjectOrganizationType;
+  need: string;
+  image: ApiProjectImageType;
+  country: string;
+  contactAddress: string;
+  contactAddress2: string;
+  contactCity: string;
+  contactCountry: string;
+  contactName: string;
+  contactPostal: string;
+  contactState: string;
+  contactUrl: string;
+  activities: string;
+}
+
 const Home: React.FC = () => {
   const { countries, organizations } = useSearch();
   const [country, setCountry] = useState<CountryType | null>(null);
@@ -40,6 +70,9 @@ const Home: React.FC = () => {
   const [organization, setOrganization] = useState<OrganizationType | null>(
     null,
   );
+  const [projects, setProjects] = useState<ApiProjectType[]>();
+  const [numberFound, setNumberFound] = useState(0);
+  const [start, setStart] = useState(0);
   const [searching, setSearching] = useState(false);
 
   const { api_key, token } = useAuth();
@@ -64,6 +97,12 @@ const Home: React.FC = () => {
       },
     }),
   );
+
+  useEffect(() => {
+    if (projects) {
+      console.log(projects);
+    }
+  }, [projects]);
 
   const classes = useStyles();
 
@@ -129,17 +168,48 @@ const Home: React.FC = () => {
             api_key,
             q: '*',
             filter,
+            start,
           },
         });
 
-        console.log(result);
+        if (result.data) {
+          const { project: apiProjects } = result.data.search.response.projects;
+          const {
+            start: apiStart,
+            numberFound: apiNumberFound,
+          } = result.data.search.response;
+
+          const newProjects = apiProjects.map((project: ApiProjectType) => {
+            return {
+              id: project.id,
+              title: project.title,
+              organization: project.organization,
+              need: project.need,
+              image: project.image,
+              country: project.country,
+              contactAddress: project.contactAddress,
+              contactAddress2: project.contactAddress2,
+              contactCity: project.contactCity,
+              contactCountry: project.contactCountry,
+              contactName: project.contactName,
+              contactPostal: project.contactPostal,
+              contactState: project.contactState,
+              contactUrl: project.contactUrl,
+              activities: project.activities,
+            };
+          });
+
+          setProjects(newProjects);
+          setNumberFound(apiNumberFound);
+          setStart(apiStart);
+        }
       } catch (error) {
         console.log(error.response);
       } finally {
         setSearching(false);
       }
     }
-  }, [api_key, country, organization, theme, token]);
+  }, [api_key, country, organization, start, theme, token]);
 
   useEffect(() => {
     if (!token) {
@@ -159,6 +229,12 @@ const Home: React.FC = () => {
       }
     })();
   }, [api_key, token]);
+
+  useEffect(() => {
+    if (start > 0) {
+      handleSearch();
+    }
+  }, [handleSearch, start]);
 
   return (
     <>
@@ -205,6 +281,9 @@ const Home: React.FC = () => {
                   setCountry(newValue as CountryType);
                   setTheme(null);
                   setOrganization(null);
+                  setStart(0);
+                  setProjects(undefined);
+                  setNumberFound(0);
                 }}
               />
               <Autocomplete
@@ -226,6 +305,9 @@ const Home: React.FC = () => {
                   setTheme(newValue as ThemeType);
                   setCountry(null);
                   setOrganization(null);
+                  setStart(0);
+                  setProjects(undefined);
+                  setNumberFound(0);
                 }}
               />
               <Autocomplete
@@ -248,6 +330,9 @@ const Home: React.FC = () => {
                   setOrganization(newValue as OrganizationType);
                   setCountry(null);
                   setTheme(null);
+                  setStart(0);
+                  setProjects(undefined);
+                  setNumberFound(0);
                 }}
               />
             </div>
@@ -282,9 +367,44 @@ const Home: React.FC = () => {
             </div>
           </SC.FiltersContainer>
           <SC.ResultsContainer>
-            <DotLoader color="gray" loading={searching} size={150} />
-            {!searching && <p>Please do a search</p>}
+            {searching === true && (
+              <DotLoader color="blue" loading={searching} size={150} />
+            )}
+            {!searching && !projects && <p>WE ARE READY TO SEARCH</p>}
+            {!!projects && projects?.length > 0 && !searching === true && (
+              <div style={{ flexGrow: 1, margin: 20 }}>
+                <Grid container spacing={3}>
+                  {projects?.map((project, index) => (
+                    <Grid item xs={6}>
+                      <ResultCard
+                        activities={project.activities}
+                        country={project.country}
+                        need={project.need}
+                        organizationLogoUrl={project.organization.logoUrl}
+                        organizationName={project.organization.name}
+                        title={project.title}
+                        contactUrl={project.contactUrl}
+                        key={String(index)}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </div>
+            )}
           </SC.ResultsContainer>
+          <div
+            style={{
+              display: 'flex',
+              width: '100%',
+            }}
+          >
+            <Pagination
+              numberFound={numberFound}
+              offset={10}
+              handlePage={setStart}
+              start={start}
+            />
+          </div>
         </SC.ContentContainer>
       </SC.MainBody>
 
@@ -298,3 +418,10 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
+// TODO: Create search pagination
+// TODO: Adjust results to mobile layout
+// TODO: Componentize search block
+// TODO: Migrate to Next.js
+// TODO: Eliminate inline styles
+// TODO: Move all styles to styles.ts (create ui components)
