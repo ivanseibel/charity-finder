@@ -17,6 +17,7 @@ import { useSearch } from '../../hooks/useSearch';
 import { getApi } from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
 import ResultCard from '../../components/ResultCard';
+import Pagination from '../../components/Pagination/Index';
 
 interface CountryType {
   name: string | null;
@@ -70,6 +71,8 @@ const Home: React.FC = () => {
     null,
   );
   const [projects, setProjects] = useState<ApiProjectType[]>();
+  const [numberFound, setNumberFound] = useState(0);
+  const [start, setStart] = useState(0);
   const [searching, setSearching] = useState(false);
 
   const { api_key, token } = useAuth();
@@ -165,11 +168,16 @@ const Home: React.FC = () => {
             api_key,
             q: '*',
             filter,
+            start,
           },
         });
 
         if (result.data) {
           const { project: apiProjects } = result.data.search.response.projects;
+          const {
+            start: apiStart,
+            numberFound: apiNumberFound,
+          } = result.data.search.response;
 
           const newProjects = apiProjects.map((project: ApiProjectType) => {
             return {
@@ -192,6 +200,8 @@ const Home: React.FC = () => {
           });
 
           setProjects(newProjects);
+          setNumberFound(apiNumberFound);
+          setStart(apiStart);
         }
       } catch (error) {
         console.log(error.response);
@@ -199,7 +209,7 @@ const Home: React.FC = () => {
         setSearching(false);
       }
     }
-  }, [api_key, country, organization, theme, token]);
+  }, [api_key, country, organization, start, theme, token]);
 
   useEffect(() => {
     if (!token) {
@@ -219,6 +229,12 @@ const Home: React.FC = () => {
       }
     })();
   }, [api_key, token]);
+
+  useEffect(() => {
+    if (start > 0) {
+      handleSearch();
+    }
+  }, [handleSearch, start]);
 
   return (
     <>
@@ -265,6 +281,9 @@ const Home: React.FC = () => {
                   setCountry(newValue as CountryType);
                   setTheme(null);
                   setOrganization(null);
+                  setStart(0);
+                  setProjects(undefined);
+                  setNumberFound(0);
                 }}
               />
               <Autocomplete
@@ -286,6 +305,9 @@ const Home: React.FC = () => {
                   setTheme(newValue as ThemeType);
                   setCountry(null);
                   setOrganization(null);
+                  setStart(0);
+                  setProjects(undefined);
+                  setNumberFound(0);
                 }}
               />
               <Autocomplete
@@ -308,6 +330,9 @@ const Home: React.FC = () => {
                   setOrganization(newValue as OrganizationType);
                   setCountry(null);
                   setTheme(null);
+                  setStart(0);
+                  setProjects(undefined);
+                  setNumberFound(0);
                 }}
               />
             </div>
@@ -345,7 +370,7 @@ const Home: React.FC = () => {
             {searching === true && (
               <DotLoader color="blue" loading={searching} size={150} />
             )}
-            {!searching && !projects && <p>Please do a search</p>}
+            {!searching && !projects && <p>WE ARE READY TO SEARCH</p>}
             {!!projects && projects?.length > 0 && !searching === true && (
               <div style={{ flexGrow: 1, margin: 20 }}>
                 <Grid container spacing={3}>
@@ -367,6 +392,19 @@ const Home: React.FC = () => {
               </div>
             )}
           </SC.ResultsContainer>
+          <div
+            style={{
+              display: 'flex',
+              width: '100%',
+            }}
+          >
+            <Pagination
+              numberFound={numberFound}
+              offset={10}
+              handlePage={setStart}
+              start={start}
+            />
+          </div>
         </SC.ContentContainer>
       </SC.MainBody>
 
@@ -382,6 +420,7 @@ const Home: React.FC = () => {
 export default Home;
 
 // TODO: Create search pagination
+// TODO: Adjust results to mobile layout
 // TODO: Componentize search block
 // TODO: Migrate to Next.js
 // TODO: Eliminate inline styles

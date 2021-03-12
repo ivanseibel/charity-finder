@@ -18,8 +18,9 @@ export const MainBody = styled.div`
   min-width: 360px;
   display: flex;
   flex: 1;
-  justify-content: center;
+  align-items: center;
   background-color: #f3f2ef;
+  flex-direction: column;
 `;
 
 export const MainFooter = styled.div`
@@ -141,7 +142,7 @@ export const FiltersContainer = styled.div`
 
 export const ResultsContainer = styled.div`
   margin: 15px 0 0;
-  min-height: 500px;
+  min-height: 450px;
   width: 100%;
   background-color: white;
   border-radius: 6px;
