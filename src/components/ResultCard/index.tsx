@@ -8,14 +8,14 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 
-import { Container } from './styles';
+// import { Container } from './styles';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     cardRoot: {
-      minWidth: 600,
+      // minWidth: 600,
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
@@ -68,7 +68,7 @@ const ResultCard: React.FC<ResultCardPropsType> = ({
 }) => {
   const classes = useStyles();
 
-  const history = useHistory();
+  // const history = useHistory();
   // borderWidth: 1,
   // borderColor: 'black',
   // borderStyle: 'solid',

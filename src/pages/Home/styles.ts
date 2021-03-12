@@ -170,3 +170,10 @@ export const FooterContainer = styled.div`
     width: 80%;
   }
 `;
+
+export const IconLink = styled.a`
+  color: black;
+  &::visited {
+    color: black;
+  }
+`;
