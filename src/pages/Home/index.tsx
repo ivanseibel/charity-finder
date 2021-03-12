@@ -3,14 +3,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { createStyles, makeStyles, TextField } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import ClearIcon from '@material-ui/icons/Clear';
-import Autocomplete, {
-  createFilterOptions,
-} from '@material-ui/lab/Autocomplete';
+import GithubIcon from '@material-ui/icons/GitHub';
+import LinkedinIcon from '@material-ui/icons/LinkedIn';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import Button from '@material-ui/core/Button';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import DotLoader from 'react-spinners/DotLoader';
 import Grid from '@material-ui/core/Grid';
-import * as SC from './styles';
 import { ReactComponent as ReactLogo } from '../../public/assets/images/charity-finder-icon-blue.svg';
 import { useModal } from '../../hooks/useModal';
 import { useSearch } from '../../hooks/useSearch';
@@ -19,14 +18,11 @@ import { useAuth } from '../../hooks/useAuth';
 import ResultCard from '../../components/ResultCard';
 import Pagination from '../../components/Pagination/Index';
 
+import * as SC from './styles';
+
 interface CountryType {
   name: string | null;
   code2: string | null;
-}
-
-interface OrganizationType {
-  id: string | null;
-  name: string | null;
 }
 
 interface ThemeType {
@@ -63,13 +59,13 @@ interface ApiProjectType {
 }
 
 const Home: React.FC = () => {
-  const { countries, organizations } = useSearch();
+  const { countries } = useSearch();
   const [country, setCountry] = useState<CountryType | null>(null);
   const [theme, setTheme] = useState<ThemeType | null>(null);
   const [themes, setThemes] = useState<ThemeType[]>([]);
-  const [organization, setOrganization] = useState<OrganizationType | null>(
-    null,
-  );
+  // const [organization, setOrganization] = useState<OrganizationType | null>(
+  //   null,
+  // );
   const [projects, setProjects] = useState<ApiProjectType[]>();
   const [numberFound, setNumberFound] = useState(0);
   const [start, setStart] = useState(0);
@@ -84,7 +80,7 @@ const Home: React.FC = () => {
   const useStyles = makeStyles(() =>
     createStyles({
       root: {
-        width: min600 ? '32%' : '100%',
+        width: min600 ? '49%' : '100%',
       },
       option: {
         fontSize: '2rem',
@@ -98,12 +94,6 @@ const Home: React.FC = () => {
     }),
   );
 
-  useEffect(() => {
-    if (projects) {
-      console.log(projects);
-    }
-  }, [projects]);
-
   const classes = useStyles();
 
   function countryToFlag(isoCode: string) {
@@ -115,11 +105,6 @@ const Home: React.FC = () => {
           )
       : isoCode;
   }
-
-  const filterOptions = createFilterOptions({
-    limit: 200,
-    stringify: (option: OrganizationType) => option.name || '',
-  });
 
   useEffect(() => {
     const message = (
@@ -159,8 +144,6 @@ const Home: React.FC = () => {
           filter = `country:${country?.code2}`;
         } else if (theme) {
           filter = `theme:${theme?.id}`;
-        } else if (organization) {
-          filter = 'organization';
         }
 
         const result = await api.get(`search/projects`, {
@@ -204,12 +187,13 @@ const Home: React.FC = () => {
           setStart(apiStart);
         }
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.log(error.response);
       } finally {
         setSearching(false);
       }
     }
-  }, [api_key, country, organization, start, theme, token]);
+  }, [api_key, country, start, theme, token]);
 
   useEffect(() => {
     if (!token) {
@@ -280,7 +264,6 @@ const Home: React.FC = () => {
                 onChange={(event, newValue) => {
                   setCountry(newValue as CountryType);
                   setTheme(null);
-                  setOrganization(null);
                   setStart(0);
                   setProjects(undefined);
                   setNumberFound(0);
@@ -304,32 +287,6 @@ const Home: React.FC = () => {
                 onChange={(event, newValue) => {
                   setTheme(newValue as ThemeType);
                   setCountry(null);
-                  setOrganization(null);
-                  setStart(0);
-                  setProjects(undefined);
-                  setNumberFound(0);
-                }}
-              />
-              <Autocomplete
-                value={organization}
-                classes={classes}
-                options={organizations}
-                getOptionLabel={(option: OrganizationType) => option.name || ''}
-                autoComplete
-                includeInputInList
-                renderInput={params => (
-                  <TextField
-                    {...params}
-                    classes={{ root: classes.input }}
-                    label="Organizations"
-                    margin="normal"
-                  />
-                )}
-                filterOptions={filterOptions}
-                onChange={(event, newValue) => {
-                  setOrganization(newValue as OrganizationType);
-                  setCountry(null);
-                  setTheme(null);
                   setStart(0);
                   setProjects(undefined);
                   setNumberFound(0);
@@ -358,7 +315,9 @@ const Home: React.FC = () => {
                   onClick={() => {
                     setCountry(null);
                     setTheme(null);
-                    setOrganization(null);
+                    setStart(0);
+                    setProjects(undefined);
+                    setNumberFound(0);
                   }}
                 >
                   Reset
@@ -375,7 +334,7 @@ const Home: React.FC = () => {
               <div style={{ flexGrow: 1, margin: 20 }}>
                 <Grid container spacing={3}>
                   {projects?.map((project, index) => (
-                    <Grid item xs={6}>
+                    <Grid item sm={12} md={6}>
                       <ResultCard
                         activities={project.activities}
                         country={project.country}
@@ -410,7 +369,40 @@ const Home: React.FC = () => {
 
       <SC.MainFooter>
         <SC.FooterContainer>
-          <p>Footer</p>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              flex: 1,
+              alignItems: 'center',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: 10,
+              }}
+            >
+              <SC.IconLink
+                href="https://github.com/ivanseibel"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'none' }}
+              >
+                <GithubIcon style={{ fontSize: 30, marginRight: 5 }} />
+              </SC.IconLink>
+              <SC.IconLink
+                href="https://www.linkedin.com/in/ivanseibel/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <LinkedinIcon style={{ fontSize: 35 }} />
+              </SC.IconLink>
+            </div>
+            <p style={{ color: 'gray' }}>2020 Seibel, Ivan L.</p>
+          </div>
         </SC.FooterContainer>
       </SC.MainFooter>
     </>
@@ -419,8 +411,6 @@ const Home: React.FC = () => {
 
 export default Home;
 
-// TODO: Create search pagination
-// TODO: Adjust results to mobile layout
 // TODO: Componentize search block
 // TODO: Migrate to Next.js
 // TODO: Eliminate inline styles

@@ -32,14 +32,19 @@ const Pagination: React.FC<PaginationType> = ({
   handlePage,
   start = 0,
 }) => {
-  const [actualPage, setActualPage] = useState(0);
-
-  console.log(start);
+  const [actualPage, setActualPage] = useState(start);
 
   const numberOfPages = useMemo(() => {
-    return !!numberFound && !!offset
-      ? Math.floor(numberFound / (offset > 0 ? offset : 1))
-      : 0;
+    const newNumberOfPages =
+      !!numberFound && !!offset
+        ? Math.floor(numberFound / (offset > 0 ? offset : 1))
+        : 0;
+
+    if (newNumberOfPages === 0) {
+      setActualPage(0);
+    }
+
+    return newNumberOfPages;
   }, [numberFound, offset]);
 
   const classes = useStyles();
