@@ -329,7 +329,7 @@ const Home: React.FC = () => {
             {searching === true && (
               <DotLoader color="blue" loading={searching} size={150} />
             )}
-            {!searching && !projects && <p>WE ARE READY TO SEARCH</p>}
+            {!searching && !projects && <p>SEARCH AND DO GOOD</p>}
             {!!projects && projects?.length > 0 && !searching === true && (
               <div style={{ flexGrow: 1, margin: 20 }}>
                 <Grid container spacing={3}>
