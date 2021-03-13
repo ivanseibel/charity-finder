@@ -1,8 +1,7 @@
 # CHARITY FINDER
 
-#### Video Demo: https://youtu.be/KJ_St8OGUyI
-
 :construction: This application is under construction. :construction:
+
 #### Description:
 
 A website that provides a charity finder that uses the GlobalGiving.org public API to find nonprofit projects around the world that have as the main objective do good.
